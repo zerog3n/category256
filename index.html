@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Category 256</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="http://www.nitrog3n.com/js/jquery.min.js"></script>
+        <style type="text/css">
+            #tilebox {
+                margin: 0;
+                padding: 0;
+                width: 256px;
+                height: 176px;
+                line-height: 0;
+                background: #000;
+                border-top: solid 1px #000;
+                border-left: solid 1px #000;
+                display: inline-block;
+            }
+            .tile {
+                border-right: solid 1px #000;
+                border-bottom: solid 1px #000;
+                position: relative;
+                display: inline-block;
+                width: 15px;
+                height: 10px;
+                margin: 0;
+                padding: 0;
+            }
+            .title {
+                display: inline-block;
+                text-align: center;
+                font-family: 'Courier New', Courier, monospace;
+                width: 257px;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="title">Image</div>
+        <div class="title">Canvas</div>
+        <div class="title">HTML/CSS</div>
+        <br/>
+
+        <!-- Update the colors in this image if you want to change the palette -->
+        <img id="_palette" src="palette.png" width="257" height="177">
+        <canvas id="_canvas"  width="257" height="177"></canvas>
+        <div id="tilebox"></div>
+        <br/>
+
+        <pre id="output"></pre>
+
+        <script>
+            
+            window.onload = function() {
+                const canvas = document.getElementById("_canvas");
+                const ctx = canvas.getContext("2d");
+                const img = document.getElementById("_palette");
+                ctx.drawImage(img, 0, 0);
+
+                const palette = getColors();
+                console.log({ colors: palette });
+
+                for (const color of palette) {
+                    const tile = $('<div class="tile" style="background: ' + color + '"><div/>')
+                    $('#tilebox').append(tile);
+                }
+
+                const output = JSON.stringify(palette, null, '\t');
+                $('#output').text(output)
+                navigator.clipboard.writeText(output)
+            };
+
+            function getColors() {
+                // prepare the canvas
+                const img = document.getElementById('_palette');
+                const canvas = document.getElementById('_canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
+
+                // palette settings
+                const count = 256;
+                const xs = 8;
+                const ys = 6;
+                const xi = 16;
+                const yi = 11;
+                let x = xs;
+                let y = ys;
+                let colors = [];
+
+                // find all the palette colors
+                for (let i=0; i < count; i++) {
+                    let c = i+1;
+                    let p = canvas.getContext('2d').getImageData(x, y, 1, 1).data;
+
+                    if (p.length === 4) {
+                        console.log(`x=${x}`,`y=${y}`, p);
+                        let rgbColor = `rgba(${p[0]},${p[1]},${p[2]},${p[3]})`;
+                        colors.push(rgbColor);
+                    }
+
+                    if (c % 16 === 0) {
+                        x = xs;
+                        y = y + yi;
+                    } else {
+                        x = x + xi;
+                    }
+                }
+
+                // return the palette array
+                return colors;
+            }
+
+        </script>
+    </body>
+</html>

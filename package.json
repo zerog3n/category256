@@ -1,0 +1,13 @@
+{
+    "name": "category256",
+    "version": "1.0.0",
+    "description": "Categorical colour scheme for use with dynamic chart libraries, contains 256 individual colours.",
+    "main": "index.js",
+    "repository": "https://github.com/zerog3n/category256.git",
+    "author": "James Haworth <zerog3n@gmail.com>",
+    "license": "CC0-1.0",
+    "scripts": {
+        "update": "node update.js"
+    },
+    "dependencies": {}
+}
